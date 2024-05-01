@@ -4,8 +4,8 @@ import { useState } from "react";
 function Card(props) {
   const { image, title, price } = props.data.attributes;
   const { id } = props.data;
-  const [isGrid, setGrid] = useState(true);
-  // const { isGrid } = props;
+  const { isGrid } = props;
+  // const [isGrid, setGrid] = useState(true);
   const navigate = useNavigate();
 
   function handleRedirect() {
@@ -28,7 +28,6 @@ function Card(props) {
           } w-full`}
         />
       </figure>
-
       <div
         className={`card-body items-center  text-center ${
           isGrid ? "flex-col" : "flex-row justify-between mb-32 "

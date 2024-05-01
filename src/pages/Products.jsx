@@ -2,11 +2,29 @@ import { useEffect, useRef, useState } from "react";
 import { FiMenu } from "react-icons/fi";
 import { BsFillGridFill } from "react-icons/bs";
 import Card from "../components/Card";
+import { useLocation, useNavigate } from "react-router-dom";
 
 function Products() {
   const [featured, setFeatured] = useState([]);
   const [loading, setLoading] = useState(false);
   const [isGrid, setGrid] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const navigate = useNavigate();
+  const location = useLocation();
+
+
+  async function getData(
+    url = `https://strapi-store-server.onrender.com/api/products?page=${currentPage}`
+  ) {
+    try {
+      const res = await fetch(url);
+      const responseData = await res.json();
+      setFeatured(responseData.data);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   useEffect(() => {
     setLoading(true);
     fetch("https://strapi-store-server.onrender.com/api/products", {
@@ -65,6 +83,42 @@ function Products() {
   function hanldeClear() {
     (searchRef.current.value = null), (cotegory.current.value = "all");
   }
+
+ 
+
+  useEffect(() => {
+    getData();
+
+    if (location.search) {
+      setCurrentPage(location.search.substring(6));
+    }
+  }, [currentPage]);
+
+  function handlePagination(num) {
+    navigate(`/products?page=${num}`);
+    setCurrentPage(num);
+  }
+
+  function handlePrev() {
+    if (currentPage > 1) {
+      setCurrentPage((currentPage) => currentPage - 1);
+      navigate(`/products?page=${currentPage - 1}`);
+    }else {
+      setCurrentPage(1)
+      navigate(`/products?page=1`);
+    }
+  }
+
+  function handleNext() {
+    if (currentPage < 3) {
+      setCurrentPage((currentPage) => currentPage + 1);
+      navigate(`/products?page=${Number(currentPage) + 1}`);
+    } else {
+      setCurrentPage(3)
+      navigate(`/products?page=3`);
+    }
+  }
+
   return (
     <div className="w-4/5 mx-auto mt-20">
       <div className="filter p-4 bg-primary-content rounded-md">
@@ -221,9 +275,19 @@ function Products() {
         {!loading &&
           featured.length > 0 &&
           featured.map((el, index) => {
-            return <Card key={index} data={el} isGrid={isGrid}></Card>;
+            return <Card key={index} data={el} isgrid={isGrid}></Card>;
           })}
       </div>
+      
+      <div className="pagination mb-20 flex justify-end">
+          <div className="join">
+            <button className="join-item btn" onClick={handlePrev}>PREV</button>
+            <button className={`join-item btn ${currentPage == 1 ? "btn-active" : ""} `} onClick={() => {handlePagination(1)}}>1</button>
+            <button className={`join-item btn ${currentPage == 2 ? "btn-active" : ""} `} onClick={() => {handlePagination(2)}}>2</button>
+            <button className={`join-item btn ${currentPage == 3 ? "btn-active" : ""} `} onClick={() => {handlePagination(3)}}>3</button>
+            <button className={`join-item btn`} onClick={handleNext}>NEXT</button>
+          </div>
+        </div>
     </div>
   );
 }

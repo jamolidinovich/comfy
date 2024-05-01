@@ -11,6 +11,7 @@ function Home() {
   const [featured, setFeatured] = useState([]);
   const [loading, setLoading] = useState(false);
   const theme = useContext(ThemeContext);
+  // const [theme, setThem] = useState();
 
   useEffect(() => {
     setLoading(true);
@@ -91,7 +92,7 @@ function Home() {
         <h2 className="mb-4">Featured Products</h2>
         <hr />
 
-        <div className="featured flex justify-between mt-4 gap-4 mb-20">
+        <div className="featured-wrapper flex justify-between mt-4 gap-4 mb-20">
           {loading && (
             <span className="loading loading-ring loading-lg block mx-auto mt-20"></span>
           )}
